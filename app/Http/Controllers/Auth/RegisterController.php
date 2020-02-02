@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Client;
+use App\Company;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,10 +52,12 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        // TODO validate type of user
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'type' => ['required', 'regex:(client|contractor)']
         ]);
     }
 
@@ -64,10 +69,35 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $request = new Request($data);
+        $typeable = [];
+
+        if($data['type'] == 'client') {
+            $typeable = $this->createClient($request);
+        } else {
+            // TODO contractor
+        }
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'typeable_id' => $typeable->id,
+            'typeable_type' => get_class($typeable),
+        ]);
+    }
+
+    private function createClient(Request $request)
+    {
+        $validatedData = $request->validate([
+            'company' => 'required|unique:companies',
+            'city' => 'required',
+        ]);
+
+        $company = Company::create($validatedData);
+
+        return Client::create([
+            'company_id' => $company->id,
         ]);
     }
 }
