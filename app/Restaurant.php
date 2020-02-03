@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Company extends Model
+class Restaurant extends Model
 {
     protected $fillable = [
-        'company', 'city'
+        'restaurant', 'city'
     ];
 
-    public function client() : hasMany
+    public function contractor() : hasMany
     {
-        return $this->hasMany(Client::class);
+        return $this->hasMany(Contractor::class);
     }
 }

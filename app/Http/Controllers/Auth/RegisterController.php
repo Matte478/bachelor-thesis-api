@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Client;
 use App\Company;
+use App\Contractor;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use App\Restaurant;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
@@ -70,12 +72,12 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $request = new Request($data);
-        $typeable = [];
+        $typeable = null;
 
         if($data['type'] == 'client') {
             $typeable = $this->createClient($request);
         } else {
-            // TODO contractor
+            $typeable = $this->createContractor($request);
         }
 
         return User::create([
@@ -98,6 +100,20 @@ class RegisterController extends Controller
 
         return Client::create([
             'company_id' => $company->id,
+        ]);
+    }
+
+    private function createContractor(Request $request)
+    {
+        $validatedData = $request->validate([
+            'restaurant' => 'required|unique:restaurants',
+            'city' => 'required',
+        ]);
+
+        $restaurant = Restaurant::create($validatedData);
+
+        return Contractor::create([
+            'restaurant_id' => $restaurant->id,
         ]);
     }
 }

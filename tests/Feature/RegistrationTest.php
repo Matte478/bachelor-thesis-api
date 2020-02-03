@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Client;
+use App\Contractor;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -32,5 +33,28 @@ class RegistrationTest extends TestCase
 
         $this->assertNotNull($client);
         $this->assertEquals('Company', $client->company()->first()->company);
+    }
+
+    /** @test */
+    public function contractor_can_register()
+    {
+        $this->withoutExceptionHandling();
+        $response = $this->json('POST', '/register', [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'secret-password',
+            'password_confirmation' => 'secret-password',
+            'type' => 'contractor',
+            'restaurant' => 'Restaurant',
+            'city' => 'Bratislava',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect('/home');
+
+        $client = Contractor::first();
+
+        $this->assertNotNull($client);
+        $this->assertEquals('Restaurant', $client->restaurant()->first()->restaurant);
     }
 }

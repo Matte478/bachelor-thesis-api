@@ -4,6 +4,7 @@ namespace App;
 
 use App\Observers\UserObserver;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -38,12 +39,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function typeable()
+    public function typeable() : morphTo
     {
         return $this->morphTo();
     }
     
-    public static function boot()
+    public static function boot() : void
     {
         parent::boot();
         User::observe(new UserObserver());
