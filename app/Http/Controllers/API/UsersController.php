@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Client;
-use App\Company;
-use App\Contractor;
+use App\Models\Client;
+use App\Models\Company;
+use App\Models\Contractor;
 use App\Http\Requests\API\RegisterClient;
 use App\Http\Requests\API\RegisterContractor;
-use App\Restaurant;
+use App\Models\Restaurant;
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller

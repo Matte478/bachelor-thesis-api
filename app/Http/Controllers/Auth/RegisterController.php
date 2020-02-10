@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Client;
-use App\Company;
-use App\Contractor;
+use App\Models\Client;
+use App\Models\Company;
+use App\Models\Contractor;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use App\Restaurant;
-use App\User;
+use App\Models\Restaurant;
+use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -67,7 +67,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return User
      */
     protected function create(array $data)
     {

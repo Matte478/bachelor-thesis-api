@@ -1,22 +1,22 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Contractor extends Model
+class Client extends Model
 {
     protected $fillable = [
-        'restaurant_id'
+        'company_id'
     ];
 
     protected $hidden = [
         'id', 'created_at', 'updated_at'
     ];
 
-    public function restaurant() : belongsTo
+    public function company() : belongsTo
     {
-        return $this->belongsTo(Restaurant::class);
+        return $this->belongsTo(Company::class);
     }
 }

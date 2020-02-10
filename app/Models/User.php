@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Observers\UserObserver;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
