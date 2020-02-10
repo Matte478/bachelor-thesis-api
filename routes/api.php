@@ -17,10 +17,12 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //});
 
-Route::post('login', 'API\UserController@login');
+Route::post('login', 'API\UsersController@login');
 Route::post('registerClient', 'API\UsersController@registerClient');
 Route::post('registerContractor', 'API\UsersController@registerContractor');
 
 Route::group(['middleware' => 'auth:api'], function(){
-    Route::post('details', 'API\UserController@details');
+    Route::post('details', 'API\UsersController@details');
+
+    Route::get('menu', 'API\MenusController@index');
 });

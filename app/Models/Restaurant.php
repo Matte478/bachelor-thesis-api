@@ -15,4 +15,9 @@ class Restaurant extends Model
     {
         return $this->hasMany(Contractor::class);
     }
+
+    public function menu() : hasMany
+    {
+        return $this->hasMany(Menu::class);
+    }
 }
