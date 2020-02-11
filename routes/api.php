@@ -17,12 +17,17 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //});
 
-Route::post('login', 'API\UsersController@login');
-Route::post('registerClient', 'API\UsersController@registerClient');
-Route::post('registerContractor', 'API\UsersController@registerContractor');
+Route::post('login',                'API\UsersController@login');
+Route::post('registerClient',       'API\UsersController@registerClient');
+Route::post('registerContractor',   'API\UsersController@registerContractor');
 
 Route::group(['middleware' => 'auth:api'], function(){
-    Route::post('details', 'API\UsersController@details');
+    Route::post('details',          'API\UsersController@details');
 
-    Route::get('menu', 'API\MenusController@index');
+    Route::get('menu',              'API\MenusController@index');
+
+    Route::get('meals',             'API\MealsController@index');
+    Route::post('meals',            'API\MealsController@store');
+    Route::post('meals/{meal}',     'API\MealsController@update');
+    Route::delete('meals/{meal}',   'API\MealsController@destroy')->name('admin/vub-codes/destroy');
 });
