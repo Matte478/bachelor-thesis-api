@@ -22,6 +22,7 @@ Route::post('registerClient',       'API\UsersController@registerClient');
 Route::post('registerContractor',   'API\UsersController@registerContractor');
 
 Route::group(['middleware' => 'auth:api'], function(){
+    Route::post('logout',           'API\UsersController@logout');
     Route::post('details',          'API\UsersController@details');
 
     Route::get('menu',              'API\MenusController@index');

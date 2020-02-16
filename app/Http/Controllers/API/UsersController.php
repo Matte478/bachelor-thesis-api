@@ -59,7 +59,8 @@ class UsersController extends Controller
 
         $user = User::create($sanitized);
 
-        $success['token'] =  $user->createToken('obedovac')->accessToken;
+        $success['token_type'] = 'Bearer';
+        $success['token'] = $user->createToken('obedovac')->accessToken;
         $success['name'] =  $user->name;
 
         return response()->json(['success'=>$success], $this->successStatus);
@@ -74,12 +75,30 @@ class UsersController extends Controller
     {
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
             $user = Auth::user();
-            $success['token'] =  $user->createToken('obedovac')->accessToken;
+            $success['token_type'] = 'Bearer';
+            $success['token'] = $user->createToken('obedovac')->accessToken;
+            $success['user'] = $user;
             return response()->json(['success' => $success], $this->successStatus);
         }
         else{
             return response()->json(['error'=>'Unauthorised'], 401);
         }
+    }
+
+    /**
+     * Logout API
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        $user = auth()->user();
+
+        $user->tokens->each(function($token, $key) {
+           $token->delete();
+        });
+
+        return response()->json(['success' => 'Logged out'], $this->successStatus);
     }
 
     /**
@@ -90,7 +109,7 @@ class UsersController extends Controller
     public function details()
     {
         $user = Auth::user();
-        return response()->json(['success' => $user], $this-> successStatus);
+        return response()->json(['success' => $user], $this->successStatus);
     }
 
     private function createClient($data) : Client

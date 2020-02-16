@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +21,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name', 'email', 'password', 'typeable_id', 'typeable_type'
+    ];
+
+    protected $appends = [
+        'type'
     ];
 
     /**
@@ -39,6 +44,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getTypeAttribute() : string
+    {
+        $typeable = explode("\\", $this->typeable_type);
+        $type = strtolower(end($typeable));
+        return $type;
+    }
 
     public function typeable() : morphTo
     {
