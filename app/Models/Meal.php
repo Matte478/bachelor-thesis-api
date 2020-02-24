@@ -12,6 +12,10 @@ class Meal extends Model
         'meal', 'price', 'menu_id'
     ];
 
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ];
+
     public function menu() : belongsTo
     {
         return $this->belongsTo(Menu::class);

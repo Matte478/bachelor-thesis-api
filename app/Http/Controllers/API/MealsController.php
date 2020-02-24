@@ -27,7 +27,7 @@ class MealsController extends Controller
 
         $restaurant = $typeable->restaurant;
         $menu = $restaurant->menu->first();
-        $meal = $menu->meal->all();
+        $meal = $menu->meal()->orderBy('id')->get();
 
         return response()->json(['data' => $meal], $this->successStatus);
     }
@@ -51,9 +51,21 @@ class MealsController extends Controller
         $menu = $typeable->restaurant->menu->first();
         $sanitized['menu_id'] = $menu->id;
 
-        Meal::create($sanitized);
+        $meal = Meal::create($sanitized);
 
-        return response()->json(['data'=>$menu->meal->all()], $this->successStatus);
+        return response()->json(['data' => $meal], $this->successStatus);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param Meal $meal
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Meal $meal)
+    {
+        return response()->json(['data' => $meal], $this->successStatus);
     }
 
     /**
@@ -69,7 +81,7 @@ class MealsController extends Controller
 
         $meal->update($sanitized);
 
-        return response()->json(['data'=>$meal], $this->successStatus);
+        return response()->json(['data' => $meal], $this->successStatus);
     }
 
     /**
@@ -92,8 +104,8 @@ class MealsController extends Controller
 
         $restaurant = $typeable->restaurant;
         $menu = $restaurant->menu->first();
-        $meal = $menu->meal->all();
+        $meals = $menu->meal->all();
 
-        return response()->json(['data'=>$meal], $this->successStatus);
+        return response()->json(['data' => $meals], $this->successStatus);
     }
 }

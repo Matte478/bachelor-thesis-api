@@ -27,8 +27,10 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     Route::get('menu',              'API\MenusController@index');
 
+    // Meals
     Route::get('meals',             'API\MealsController@index');
     Route::post('meals',            'API\MealsController@store');
+    Route::get('meals/{meal}',      'API\MealsController@show');
     Route::post('meals/{meal}',     'API\MealsController@update');
-    Route::delete('meals/{meal}',   'API\MealsController@destroy')->name('admin/vub-codes/destroy');
+    Route::delete('meals/{meal}',   'API\MealsController@destroy');
 });
