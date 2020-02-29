@@ -22,15 +22,20 @@ Route::post('registerClient',       'API\UsersController@registerClient');
 Route::post('registerContractor',   'API\UsersController@registerContractor');
 
 Route::group(['middleware' => 'auth:api'], function(){
-    Route::post('logout',           'API\UsersController@logout');
-    Route::post('details',          'API\UsersController@details');
+    Route::post('logout',                           'API\UsersController@logout');
+    Route::post('details',                          'API\UsersController@details');
 
-    Route::get('menu',              'API\MenusController@index');
+    Route::get('menu',                              'API\MenusController@index');
 
     // Meals
-    Route::get('meals',             'API\MealsController@index');
-    Route::post('meals',            'API\MealsController@store');
-    Route::get('meals/{meal}',      'API\MealsController@show');
-    Route::post('meals/{meal}',     'API\MealsController@update');
-    Route::delete('meals/{meal}',   'API\MealsController@destroy');
+    Route::get('meals',                             'API\MealsController@index');
+    Route::post('meals',                            'API\MealsController@store');
+    Route::get('meals/{meal}',                      'API\MealsController@show');
+    Route::post('meals/{meal}',                     'API\MealsController@update');
+    Route::delete('meals/{meal}',                   'API\MealsController@destroy');
+    
+    // Agreement
+    Route::get('agreements',                       'API\AgreementController@index');
+    Route::post('agreements',                       'API\AgreementController@create');
+    Route::post('agreements/{agreement}/confirm',   'API\AgreementController@confirm');
 });
