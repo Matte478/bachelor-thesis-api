@@ -35,7 +35,10 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::delete('meals/{meal}',                   'API\MealsController@destroy');
     
     // Agreement
-    Route::get('agreements',                       'API\AgreementController@index');
+    Route::get('agreements',                        'API\AgreementController@index');
     Route::post('agreements',                       'API\AgreementController@create');
     Route::post('agreements/{agreement}/confirm',   'API\AgreementController@confirm');
+
+    // Restaunrat
+    Route::get('restaurants',                       'API\RestaurantController@index');
 });

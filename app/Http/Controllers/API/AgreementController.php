@@ -20,10 +20,19 @@ class AgreementController extends Controller
     public function index(IndexAgreement $request)
     {
         $user = auth()->user();
-        $restaurantId = $user->restaurant_id;
 
-        // TODO filter for confirmed / unconfirmed agreements
-        $agreements = Agreement::where('restaurant_id', $restaurantId)->get();
+        $agreements = [];
+        switch($user->type) {
+            case 'client':
+                $companyId = $user->company_id;
+                $agreements = Agreement::with('restaurant')->where('company_id', $companyId)->first();
+                break;
+            case 'contractor':
+                $restaurantId = $user->restaurant_id;
+                // TODO filter for confirmed / unconfirmed agreements
+                $agreements = Agreement::with('company')->where('restaurant_id', $restaurantId)->get();
+                break;
+        }
 
         return response()->json(['data' => $agreements], $this->successStatus);
     }
@@ -40,10 +49,11 @@ class AgreementController extends Controller
         $companyId = $user->company_id;
 
         $agreement = Agreement::where('company_id', $companyId)
-            ->where('restaurant_id', $sanitized['restaurant_id']);
+            ->where('restaurant_id', $sanitized['restaurant_id'])
+            ->first();
 
         if($agreement)
-            return response()->json(['error'=>'The agreement already exists'], 401);
+            return response()->json(['error'=>'The agreement already exists'], 409);
 
         Agreement::create([
             'company_id' => $companyId,
@@ -69,7 +79,7 @@ class AgreementController extends Controller
             return response()->json(['error'=>'Unauthorised'], 401);
 
         if($agreement->confirmed)
-            return response()->json(['error'=>'The agreement has already been confirmed'], 401);
+            return response()->json(['error'=>'The agreement has already been confirmed'], 409);
 
         $agreement->update([
             'confirmed' => true
