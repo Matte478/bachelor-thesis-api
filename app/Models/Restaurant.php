@@ -11,13 +11,18 @@ class Restaurant extends Model
         'restaurant', 'city'
     ];
 
-    public function contractor() : hasMany
+    public function contractor(): hasMany
     {
         return $this->hasMany(Contractor::class);
     }
 
-    public function menu() : hasMany
+    public function menu(): hasMany
     {
         return $this->hasMany(Menu::class);
+    }
+
+    public function agreement(): hasMany
+    {
+        return $this->hasMany(Agreement::class);
     }
 }

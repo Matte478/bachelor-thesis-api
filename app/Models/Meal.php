@@ -16,13 +16,19 @@ class Meal extends Model
         'created_at', 'updated_at'
     ];
 
-    public function menu() : belongsTo
+    public function menu(): belongsTo
     {
         return $this->belongsTo(Menu::class);
     }
 
-    public function meal() : hasMany
+    public function restaurant(): belongsTo
     {
-        return $this->hasMany(Meal::class);
+        return $this->menu->restaurant();
     }
+
+//    TODO: why I defined this?
+//    public function meal() : hasMany
+//    {
+//        return $this->hasMany(Meal::class);
+//    }
 }
