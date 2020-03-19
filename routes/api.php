@@ -43,5 +43,6 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('restaurants',                       'API\RestaurantController@index');
 
     // Order
+    Route::get('orders',                            'API\OrderController@index');
     Route::post('orders',                           'API\OrderController@store');
 });

@@ -7,6 +7,21 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreOrder extends FormRequest
 {
     /**
+     * Prepare the data for validation.
+     *
+     */
+    protected function prepareForValidation()
+    {
+        $orders = array_filter($this->get('orders'), function($item) {
+            return strtotime($item['date']) > strtotime('now');
+        });
+
+        $this->merge([
+            'orders' => $orders
+        ]);
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,8 +39,8 @@ class StoreOrder extends FormRequest
     public function rules()
     {
         return [
-            'meal_id' => ['required', 'numeric'],
-            'date' => ['required', 'date_format:Y-m-d', 'after:yesterday']
+            'orders.*.date' => ['required', 'date_format:Y-m-d'],
+            'orders.*.meal' => []
         ];
     }
 }

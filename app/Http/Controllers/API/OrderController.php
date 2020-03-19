@@ -10,26 +10,35 @@ use App\Models\Company;
 use App\Models\Meal;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
     public $successStatus = 200;
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        $user = auth()->user();
+        $orders = Order::where('user_id', $user->id)->get();
+
+        return response()->json(['data' => $orders], $this->successStatus);
+    }
 
     /**
      * @param StoreOrder|Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
-//    public function store(StoreOrder $request)
+    public function store(StoreOrder $request)
     {
-//        TODO: array validation
-//        $sanitized = $request->validated();
+        $sanitized = $request->validated();
 
         $user = auth()->user();
         $company = Company::find($user->company_id);
 
-        foreach($request->data as $data)
+        foreach($sanitized['orders'] as $data)
         {
             if($data['meal'] == null) continue;
 
