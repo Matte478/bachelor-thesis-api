@@ -40,7 +40,7 @@ class StoreOrder extends FormRequest
     {
         return [
             'orders.*.date' => ['required', 'date_format:Y-m-d'],
-            'orders.*.meal' => []
+            'orders.*.meal_id' => []
         ];
     }
 }

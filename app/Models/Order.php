@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 
 class Order extends Model
 {
@@ -28,5 +31,15 @@ class Order extends Model
     public function meal(): BelongsTo
     {
         return $this->belongsTo(Meal::class);
+    }
+
+    public function scopeDateFrom(Builder $query, $date): Builder
+    {
+        return $query->where('date', '>=', Carbon::parse($date));
+    }
+
+    public function scopeDateTo(Builder $query, $date): Builder
+    {
+        return $query->where('date', '<=', Carbon::parse($date));
     }
 }
