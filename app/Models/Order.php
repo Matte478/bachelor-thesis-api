@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Order extends Model
 {
     protected $fillable = [
-        'meal_id', 'meal', 'price', 'discount_price', 'date', 'user_id', 'restaurant_id'
+        'meal_id', 'meal', 'price', 'discount_price', 'date', 'user_id', 'restaurant_id', 'company_id'
     ];
 
     protected $hidden = [
@@ -28,14 +28,9 @@ class Order extends Model
         return $this->belongsTo(Restaurant::class);
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
-//        $user = $this->user;
-//        $client = app($user->typeable_type)::find($user->typeable_id);
-//
-//        return $client->company;
-
-//        return $this->belongsToThrough(Company::class, User::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function meal(): BelongsTo
@@ -51,5 +46,11 @@ class Order extends Model
     public function scopeDateTo(Builder $query, $date): Builder
     {
         return $query->where('date', '<=', Carbon::parse($date));
+    }
+
+    public function scopeCompany(Builder $query, $company): Builder
+    {
+        return $query->join('companies', 'companies.id', 'company_id')
+                    ->where('companies.company', $company);
     }
 }

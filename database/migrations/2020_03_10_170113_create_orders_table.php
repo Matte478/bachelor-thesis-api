@@ -22,25 +22,9 @@ class CreateOrdersTable extends Migration
             $table->date('date');
 
             $table->unsignedInteger('meal_id');
-//            $table->foreign('meal_id')
-//                ->references('id')
-//                ->on('meals')
-//                ->onUpdate('cascade')
-//                ->onDelete('cascade');
-
             $table->unsignedInteger('user_id');
-//            $table->foreign('user_id')
-//                ->references('id')
-//                ->on('users')
-//                ->onUpdate('cascade')
-//                ->onDelete('cascade');
-
             $table->unsignedInteger('restaurant_id');
-//            $table->foreign('restaurant_id')
-//                ->references('id')
-//                ->on('restaurants')
-//                ->onUpdate('cascade')
-//                ->onDelete('cascade');
+            $table->unsignedInteger('company_id');
 
             $table->timestamps();
         });

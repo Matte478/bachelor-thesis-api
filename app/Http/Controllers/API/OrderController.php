@@ -61,8 +61,8 @@ class OrderController extends Controller
 //            ->select(['company_id'])
 //            ->with('company')
 //            ->get();
-
-        $orders = $this->orderRepository->getContractorOrders($user->id);
+        $contractor = app($user->typeable_type)::find($user->typeable_id);
+        $orders = $this->orderRepository->getContractorOrders($contractor->restaurant_id);
 
         return $orders;
     }
@@ -100,6 +100,7 @@ class OrderController extends Controller
                 'discount_price' => $meal->price,
                 'user_id' => $user->id,
                 'restaurant_id' => $restaurant->id,
+                'company_id' => $company->id,
                 'date' => $data['date']
             ];
 
