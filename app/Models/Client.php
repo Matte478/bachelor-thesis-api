@@ -15,7 +15,7 @@ class Client extends Model
         'id', 'created_at', 'updated_at'
     ];
 
-    public function company() : belongsTo
+    public function company(): belongsTo
     {
         return $this->belongsTo(Company::class);
     }

@@ -8,12 +8,24 @@ use App\Models\Agreement;
 use App\Models\Company;
 use App\Models\Meal;
 use App\Models\Order;
+use App\Repositories\OrderRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderController extends Controller
 {
+    protected $orderRepository;
     public $successStatus = 200;
+
+    /**
+     * OrderController constructor.
+     * @param OrderRepository $orderRepository
+     */
+    public function __construct(OrderRepository $orderRepository)
+    {
+        $this->orderRepository = $orderRepository;
+    }
 
     /**
      * @return \Illuminate\Http\JsonResponse
@@ -21,19 +33,39 @@ class OrderController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $result = null;
 
-        $orders = QueryBuilder::for(Order::class)
-            ->allowedFilters([
-                AllowedFilter::scope('date_from'),
-                AllowedFilter::scope('date_to'),
-            ])
-            ->where('user_id', $user->id)
-            ->orderBy('date')
-            ->get();
+        switch($user->type) {
+            case 'client':
+                $result = $this->clientIndex($user);
+                break;
+            case 'contractor':
+                $result = $this->contractorIndex($user);
+                break;
+        }
 
-        return response()->json(['data' => $orders], $this->successStatus);
+        return response()->json(['data' => $result], $this->successStatus);
     }
 
+    public function clientIndex($user)
+    {
+        $orders = $this->orderRepository->getClientOrders($user->id);
+
+        return $orders;
+    }
+
+    public function contractorIndex($user)
+    {
+//        $clients = Agreement::where('confirmed', true)
+//            ->where('restaurant_id', $user->restaurant_id)
+//            ->select(['company_id'])
+//            ->with('company')
+//            ->get();
+
+        $orders = $this->orderRepository->getContractorOrders($user->id);
+
+        return $orders;
+    }
 
     /**
      * @param StoreOrder $request

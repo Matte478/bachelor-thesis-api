@@ -28,6 +28,16 @@ class Order extends Model
         return $this->belongsTo(Restaurant::class);
     }
 
+    public function company()
+    {
+//        $user = $this->user;
+//        $client = app($user->typeable_type)::find($user->typeable_id);
+//
+//        return $client->company;
+
+//        return $this->belongsToThrough(Company::class, User::class);
+    }
+
     public function meal(): BelongsTo
     {
         return $this->belongsTo(Meal::class);
