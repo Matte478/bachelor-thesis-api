@@ -30,7 +30,7 @@ class OrderRepository
 
         return $orders;
     }
-    
+
     /**
      * @param int $restaurantId
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|QueryBuilder|QueryBuilder[]
@@ -52,29 +52,65 @@ class OrderRepository
         $query->defaultSort('date')
             ->allowedSorts('id', 'date', 'price')
             ->where('restaurant_id', $restaurantId)
-            ->select('meal_id', 'company_id', 'company', 'date');
+            ->select('meal_id', 'meal', 'company_id', 'company', 'date', 'price');
 
         $orders = $query->get();
-        $grouped = $orders->groupBy(['company', 'date', 'meal_id']);
+//        $grouped = $orders->groupBy(['company', 'date', 'meal_id']);
+        $grouped = $orders->groupBy(['date', 'company', 'meal_id']);
 
-        // map companies
-        $result = $grouped->map(function($companies) {
-            // map days
-            return $companies->map(function($days) {
+        $result = $this->formatResult($grouped);
+
+        return $result;
+    }
+
+    /**
+     * @param $array
+     * @return mixed
+     */
+    private function formatResult($array)
+    {
+        // map days
+        return $array->map(function($days) {
+            // map companies
+            return $days->map(function($companies) {
                 // map orders
-                return $days->map(function($orders) {
+                $meals = $companies->map(function($orders) {
                     $count = collect($orders)->count();
                     $order = $orders[0];
                     $order['count'] = $count;
                     return $order;
                 });
+                $price = $this->calculateOrderPrice($meals);
+                $arr = [
+                    'price' => $price,
+                    'meals' => $meals
+                ];
+                return $arr;
             });
         });
-
-        return $result;
     }
 
-    private function isJoined($query, $table)
+    /**
+     * @param $meals
+     * @return float
+     */
+    private function calculateOrderPrice($meals): float
+    {
+        $price = 0;
+
+        foreach($meals as $meal) {
+            $price += ($meal->count * $meal->price);
+        }
+
+        return $price;
+    }
+
+    /**
+     * @param $query
+     * @param $table
+     * @return bool
+     */
+    private function isJoined($query, $table): bool
     {
         $joins = $query->getQuery()->joins;
         if($joins == null) {
