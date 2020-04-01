@@ -5,6 +5,8 @@ namespace App\Repositories;
 
 
 use App\Models\Order;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -33,7 +35,7 @@ class OrderRepository
 
     /**
      * @param int $restaurantId
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|QueryBuilder|QueryBuilder[]
+     * @return \Illuminate\Database\Eloquent\Collection|Collection|QueryBuilder|QueryBuilder[]
      */
     public function getContractorOrders(int $restaurantId)
     {
@@ -55,10 +57,36 @@ class OrderRepository
             ->select('meal_id', 'meal', 'company_id', 'company', 'date', 'price');
 
         $orders = $query->get();
-//        $grouped = $orders->groupBy(['company', 'date', 'meal_id']);
-        $grouped = $orders->groupBy(['date', 'company', 'meal_id']);
 
+        $grouped = $this->groupQueryResult($orders, 'day');
         $result = $this->formatResult($grouped);
+
+        return $result;
+    }
+
+    /**
+     * @param $orders
+     * @param string $type
+     * @return mixed
+     */
+    private function groupQueryResult($orders, $type = 'month')
+    {
+        $result = null;
+
+        switch ($type) {
+            case 'month':
+                $result = $orders->groupBy([
+                    'date' => function($d) {
+                        return Carbon::parse($d->date)->format('yy-m');
+                    },
+                    'company' => 'company',
+                    'meal_id' => 'meal_id'
+                ]);
+                break;
+            case 'day':
+                $result = $orders->groupBy(['date', 'company', 'meal_id']);
+                break;
+        }
 
         return $result;
     }
@@ -102,7 +130,7 @@ class OrderRepository
             $price += ($meal->count * $meal->price);
         }
 
-        return $price;
+        return number_format($price, 2);
     }
 
     /**
