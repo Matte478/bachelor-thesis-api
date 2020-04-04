@@ -13,12 +13,12 @@ class Agreement extends Model
         'confirmed'
     ];
 
-    public function restaurant() : belongsTo
+    public function restaurant(): belongsTo
     {
         return $this->belongsTo(Restaurant::class);
     }
 
-    public function company() : belongsTo
+    public function company(): belongsTo
     {
         return $this->belongsTo(Company::class);
     }

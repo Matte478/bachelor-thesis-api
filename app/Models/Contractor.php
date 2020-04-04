@@ -15,7 +15,7 @@ class Contractor extends Model
         'id', 'created_at', 'updated_at'
     ];
 
-    public function restaurant() : belongsTo
+    public function restaurant(): belongsTo
     {
         return $this->belongsTo(Restaurant::class);
     }
