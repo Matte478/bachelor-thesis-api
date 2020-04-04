@@ -34,15 +34,15 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('meals/{meal}',                     'API\MealsController@update');
     Route::delete('meals/{meal}',                   'API\MealsController@destroy');
     
-    // Agreement
+    // Agreements
     Route::get('agreements',                        'API\AgreementController@index');
     Route::post('agreements',                       'API\AgreementController@create');
     Route::post('agreements/{agreement}/confirm',   'API\AgreementController@confirm');
 
-    // Restaunrat
+    // Restaurants
     Route::get('restaurants',                       'API\RestaurantController@index');
 
-    // Order
-    Route::get('orders',                            'API\OrderController@index');
+    // Orders
+    Route::get('orders/{type?}',                    'API\OrderController@index');
     Route::post('orders',                           'API\OrderController@store');
 });

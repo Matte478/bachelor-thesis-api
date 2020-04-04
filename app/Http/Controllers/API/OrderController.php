@@ -27,44 +27,29 @@ class OrderController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
+
     /**
+     * @param string $type
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index($type = 'days')
     {
         $user = auth()->user();
         $result = null;
+
+        if($type != 'days' && $type != 'months')
+            $type = 'days';
 
         switch($user->type) {
             case 'client':
                 $result = $this->clientIndex($user);
                 break;
             case 'contractor':
-                $result = $this->contractorIndex($user);
+                $result = $this->contractorIndex($user, $type);
                 break;
         }
 
         return response()->json(['data' => $result], $this->successStatus);
-    }
-
-    public function clientIndex($user)
-    {
-        $orders = $this->orderRepository->getClientOrders($user->id);
-
-        return $orders;
-    }
-
-    public function contractorIndex($user)
-    {
-//        $clients = Agreement::where('confirmed', true)
-//            ->where('restaurant_id', $user->restaurant_id)
-//            ->select(['company_id'])
-//            ->with('company')
-//            ->get();
-        $contractor = app($user->typeable_type)::find($user->typeable_id);
-        $orders = $this->orderRepository->getContractorOrders($contractor->restaurant_id);
-
-        return $orders;
     }
 
     /**
@@ -111,5 +96,20 @@ class OrderController extends Controller
         }
 
         return response()->json(['success' => 'success'], $this->successStatus);
+    }
+
+    private function clientIndex($user)
+    {
+        $orders = $this->orderRepository->getClientOrders($user->id);
+
+        return $orders;
+    }
+
+    private function contractorIndex($user, $type)
+    {
+        $contractor = app($user->typeable_type)::find($user->typeable_id);
+        $orders = $this->orderRepository->getContractorOrders($contractor->restaurant_id, $type);
+
+        return $orders;
     }
 }

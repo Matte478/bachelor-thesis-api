@@ -7,7 +7,8 @@ use App\Http\Requests\API\Agreement\ConfirmAgreement;
 use App\Http\Requests\API\Agreement\CreateAgreement;
 use App\Http\Requests\API\Agreement\IndexAgreement;
 use App\Models\Agreement;
-use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class AgreementController extends Controller
 {
@@ -20,21 +21,18 @@ class AgreementController extends Controller
     public function index(IndexAgreement $request)
     {
         $user = auth()->user();
+        $result = null;
 
-        $agreements = [];
         switch($user->type) {
             case 'client':
-                $companyId = $user->company_id;
-                $agreements = Agreement::with('restaurant')->where('company_id', $companyId)->first();
+                $result = $this->clientIndex($user);
                 break;
             case 'contractor':
-                $restaurantId = $user->restaurant_id;
-                // TODO filter for confirmed / unconfirmed agreements
-                $agreements = Agreement::with('company')->where('restaurant_id', $restaurantId)->get();
+                $result = $this->contractorIndex($user);
                 break;
         }
 
-        return response()->json(['data' => $agreements], $this->successStatus);
+        return response()->json(['data' => $result], $this->successStatus);
     }
     
     /**
@@ -86,6 +84,29 @@ class AgreementController extends Controller
         ]);
 
         return response()->json(['success' => 'success'], $this->successStatus);
+    }
+
+    private function clientIndex($user)
+    {
+        $companyId = $user->company_id;
+        $agreement = Agreement::with('restaurant')
+            ->where('company_id', $companyId)
+            ->first();
+
+        return $agreement;
+    }
+
+    private function contractorIndex($user)
+    {
+        $agreements = QueryBuilder::for(Agreement::class)
+            ->allowedFilters([
+                AllowedFilter::exact('confirmed')
+            ])
+            ->with('company')
+            ->where('restaurant_id', $user->restaurant_id)
+            ->get();
+
+        return $agreements;
     }
 
 }

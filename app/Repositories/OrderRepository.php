@@ -33,11 +33,13 @@ class OrderRepository
         return $orders;
     }
 
+
     /**
      * @param int $restaurantId
-     * @return \Illuminate\Database\Eloquent\Collection|Collection|QueryBuilder|QueryBuilder[]
+     * @param string $type
+     * @return mixed
      */
-    public function getContractorOrders(int $restaurantId)
+    public function getContractorOrders(int $restaurantId, string $type = 'days')
     {
         $query = QueryBuilder::for(Order::class)
             ->allowedFilters([
@@ -58,7 +60,7 @@ class OrderRepository
 
         $orders = $query->get();
 
-        $grouped = $this->groupQueryResult($orders, 'day');
+        $grouped = $this->groupQueryResult($orders, $type);
         $result = $this->formatResult($grouped);
 
         return $result;
@@ -69,12 +71,12 @@ class OrderRepository
      * @param string $type
      * @return mixed
      */
-    private function groupQueryResult($orders, $type = 'month')
+    private function groupQueryResult($orders, $type = 'days')
     {
         $result = null;
 
         switch ($type) {
-            case 'month':
+            case 'months':
                 $result = $orders->groupBy([
                     'date' => function($d) {
                         return Carbon::parse($d->date)->format('yy-m');
@@ -83,7 +85,8 @@ class OrderRepository
                     'meal_id' => 'meal_id'
                 ]);
                 break;
-            case 'day':
+            case 'days':
+            default:
                 $result = $orders->groupBy(['date', 'company', 'meal_id']);
                 break;
         }
