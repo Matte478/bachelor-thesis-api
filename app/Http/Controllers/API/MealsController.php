@@ -7,6 +7,8 @@ use App\Http\Requests\API\Meal\DestroyMeal;
 use App\Http\Requests\API\Meal\storeMeal;
 use App\Http\Requests\API\Meal\UpdateMeal;
 use App\Models\Meal;
+use Exception;
+use Illuminate\Http\JsonResponse;
 
 class MealsController extends Controller
 {
@@ -15,7 +17,7 @@ class MealsController extends Controller
     /**
      * Return a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index()
     {
@@ -40,7 +42,7 @@ class MealsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param storeMeal $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(storeMeal $request)
     {
@@ -60,12 +62,11 @@ class MealsController extends Controller
         return response()->json(['data' => $meal], $this->successStatus);
     }
 
-
     /**
      * Display the specified resource.
      *
      * @param Meal $meal
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(Meal $meal)
     {
@@ -77,7 +78,7 @@ class MealsController extends Controller
      *
      * @param UpdateMeal $request
      * @param Meal $meal
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(UpdateMeal $request, Meal $meal)
     {
@@ -93,8 +94,8 @@ class MealsController extends Controller
      * 
      * @param DestroyMeal $request
      * @param Meal $meal
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
     public function destroy(DestroyMeal $request, Meal $meal)
     {

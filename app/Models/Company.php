@@ -17,6 +17,11 @@ class Company extends Model
         return $this->hasMany(Client::class);
     }
 
+    public function typeOfEmployments(): hasMany
+    {
+        return $this->hasMany(TypeOfEmployment::class);
+    }
+
     public function agreement(): belongsTo
     {
         return $this->belongsTo(Agreement::class);

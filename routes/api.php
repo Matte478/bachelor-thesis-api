@@ -21,28 +21,34 @@ Route::post('login',                'API\UsersController@login');
 Route::post('registerClient',       'API\UsersController@registerClient');
 Route::post('registerContractor',   'API\UsersController@registerContractor');
 
-Route::group(['middleware' => 'auth:api'], function(){
-    Route::post('logout',                           'API\UsersController@logout');
-    Route::post('details',                          'API\UsersController@details');
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::post('logout',                                       'API\UsersController@logout');
+    Route::post('details',                                      'API\UsersController@details');
 
-    Route::get('menu',                              'API\MenusController@index');
+    Route::get('menu',                                          'API\MenusController@index');
 
     // Meals
-    Route::get('meals',                             'API\MealsController@index');
-    Route::post('meals',                            'API\MealsController@store');
-    Route::get('meals/{meal}',                      'API\MealsController@show');
-    Route::post('meals/{meal}',                     'API\MealsController@update');
-    Route::delete('meals/{meal}',                   'API\MealsController@destroy');
+    Route::get('meals',                                         'API\MealsController@index');
+    Route::post('meals',                                        'API\MealsController@store');
+    Route::get('meals/{meal}',                                  'API\MealsController@show');
+    Route::post('meals/{meal}',                                 'API\MealsController@update');
+    Route::delete('meals/{meal}',                               'API\MealsController@destroy');
     
     // Agreements
-    Route::get('agreements',                        'API\AgreementController@index');
-    Route::post('agreements',                       'API\AgreementController@create');
-    Route::post('agreements/{agreement}/confirm',   'API\AgreementController@confirm');
+    Route::get('agreements',                                    'API\AgreementController@index');
+    Route::post('agreements',                                   'API\AgreementController@create');
+    Route::post('agreements/{agreement}/confirm',               'API\AgreementController@confirm');
 
     // Restaurants
-    Route::get('restaurants',                       'API\RestaurantController@index');
+    Route::get('restaurants',                                   'API\RestaurantController@index');
 
     // Orders
-    Route::get('orders/{type?}',                    'API\OrderController@index');
-    Route::post('orders',                           'API\OrderController@store');
+    Route::get('orders/{type?}',                                'API\OrderController@index');
+    Route::post('orders',                                       'API\OrderController@store');
+
+    // Type of employments
+    Route::get('type-of-employments',                          'API\TypeOfEmploymentsController@index');
+    Route::post('type-of-employments',                         'API\TypeOfEmploymentsController@store');
+    Route::post('type-of-employments/{typeOfEmployment}',      'API\TypeOfEmploymentsController@update');
+    Route::delete('type-of-employments/{typeOfEmployment}',    'API\TypeOfEmploymentsController@destroy');
 });
