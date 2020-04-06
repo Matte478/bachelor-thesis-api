@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\TypeOfEmployment\DestroyTypeOfEmployment;
 use App\Http\Requests\API\TypeOfEmployment\IndexTypeOfEmployment;
+use App\Http\Requests\API\TypeOfEmployment\ShowTypeOfEmployment;
 use App\Http\Requests\API\TypeOfEmployment\StoreTypeOfEmployment;
 use App\Http\Requests\API\TypeOfEmployment\UpdateTypeOfEmployment;
 use App\Models\TypeOfEmployment;
@@ -27,7 +28,7 @@ class TypeOfEmploymentsController extends Controller
 
         $user = auth()->user();
         $client = app($user->typeable_type)::find($user->typeable_id);
-        $typeOfEmployments = $client->company->typeOfEmployments;
+        $typeOfEmployments = $client->company->typeOfEmployments()->orderBy('id')->get();
 
         return response()->json(['data' => $typeOfEmployments], $this->successStatus);
     }
@@ -54,6 +55,7 @@ class TypeOfEmploymentsController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param ShowTypeOfEmployment $request
      * @param TypeOfEmployment $typeOfEmployment
      * @return JsonResponse
      */

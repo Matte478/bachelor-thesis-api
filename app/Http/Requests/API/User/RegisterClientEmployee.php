@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\API\TypeOfEmployment;
+namespace App\Http\Requests\API\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ShowTypeOfEmployment extends FormRequest
+class RegisterClientEmployee extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,10 @@ class ShowTypeOfEmployment extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'type-of-employment_id' => ['nullable', 'integer'],
         ];
     }
 }

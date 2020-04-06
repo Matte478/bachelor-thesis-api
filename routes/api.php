@@ -25,6 +25,9 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('logout',                                       'API\UsersController@logout');
     Route::post('details',                                      'API\UsersController@details');
 
+    // Client employee
+    Route::post('register-client-employee',                     'API\UsersController@registerClientEmployee');
+
     Route::get('menu',                                          'API\MenusController@index');
 
     // Meals
@@ -49,6 +52,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     // Type of employments
     Route::get('type-of-employments',                          'API\TypeOfEmploymentsController@index');
     Route::post('type-of-employments',                         'API\TypeOfEmploymentsController@store');
+    Route::get('type-of-employments/{typeOfEmployment}',       'API\TypeOfEmploymentsController@show');
     Route::post('type-of-employments/{typeOfEmployment}',      'API\TypeOfEmploymentsController@update');
     Route::delete('type-of-employments/{typeOfEmployment}',    'API\TypeOfEmploymentsController@destroy');
 });

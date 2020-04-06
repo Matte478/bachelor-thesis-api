@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\User\RegisterClient;
+use App\Http\Requests\API\User\RegisterClientEmployee;
+use App\Http\Requests\API\User\RegisterContractor;
 use App\Models\Client;
 use App\Models\Company;
 use App\Models\Contractor;
-use App\Http\Requests\API\RegisterClient;
-use App\Http\Requests\API\RegisterContractor;
 use App\Models\Restaurant;
 use App\Http\Controllers\Controller;
+use App\Models\TypeOfEmployment;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
@@ -21,7 +24,7 @@ class UsersController extends Controller
      * Register client API
      *
      * @param RegisterClient $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function registerClient(RegisterClient $request)
     {
@@ -42,10 +45,42 @@ class UsersController extends Controller
     }
 
     /**
+     * Register client employee API
+     *
+     * @param RegisterClientEmployee $request
+     * @return JsonResponse
+     */
+    public function registerClientEmployee(RegisterClientEmployee $request)
+    {
+        $sanitized = $request->validated();
+
+        $user = auth()->user();
+        $client = app($user->typeable_type)::find($user->typeable_id);
+        $sanitized['company_id'] = $client->company_id;
+
+        if(isset($sanitized['type-of-employment_id'])) {
+            $typeOfEmployment = TypeOfEmployment::find($sanitized['type-of-employment_id']);
+            if($typeOfEmployment->company_id != $sanitized['company_id']) {
+                $sanitized['type-of-employment_id'] = null;
+            }
+        }
+
+        $client = Client::create($sanitized);
+
+        $sanitized['password'] = bcrypt($sanitized['password']);
+        $sanitized['typeable_id'] = $client->id;
+        $sanitized['typeable_type'] = get_class($client);
+
+        User::create($sanitized);
+
+        return response()->json(['success'=>'success'], $this->successStatus);
+    }
+
+    /**
      * Register contractor API
      *
      * @param RegisterContractor $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function registerContractor(RegisterContractor $request)
     {
@@ -69,7 +104,7 @@ class UsersController extends Controller
     /**
      * Login API
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function login()
     {
@@ -88,7 +123,7 @@ class UsersController extends Controller
     /**
      * Logout API
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function logout()
     {
@@ -104,7 +139,7 @@ class UsersController extends Controller
     /**
      * Details API
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function details()
     {
@@ -112,7 +147,7 @@ class UsersController extends Controller
         return response()->json(['success' => $user], $this->successStatus);
     }
 
-    private function createClient($data) : Client
+    private function createClient($data): Client
     {
         $company = Company::create($data);
 
@@ -121,7 +156,7 @@ class UsersController extends Controller
         ]);
     }
 
-    private function createContractor($data) : Contractor
+    private function createContractor($data): Contractor
     {
         $restaurant = Restaurant::create($data);
 

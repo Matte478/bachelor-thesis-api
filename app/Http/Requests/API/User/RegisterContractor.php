@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterClient extends FormRequest
+class RegisterContractor extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class RegisterClient extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'company' => ['required', 'string', 'unique:companies'],
+            'restaurant' => ['required', 'string', 'unique:restaurants'],
             'city' => ['required', 'string'],
         ];
     }

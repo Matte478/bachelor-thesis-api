@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Client extends Model
 {
     protected $fillable = [
-        'company_id'
+        'company_id', 'type-of-employment_id'
     ];
 
     protected $hidden = [
