@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,7 +24,9 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('details',                                      'API\UsersController@details');
 
     // Client employee
-    Route::post('register-client-employee',                     'API\UsersController@registerClientEmployee');
+    Route::get('employees',                                     'API\UsersController@employees');
+    Route::post('employees',                                    'API\UsersController@registerClientEmployee');
+    Route::get('employees/{employee}',                          'API\UsersController@getClientEmployee');
 
     Route::get('menu',                                          'API\MenusController@index');
 

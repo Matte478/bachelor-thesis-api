@@ -77,6 +77,49 @@ class UsersController extends Controller
     }
 
     /**
+     * Get client employee API
+     *
+     * @param $employee
+     * @return JsonResponse
+     */
+    public function getClientEmployee($employee)
+    {
+        $user = User::find($employee);
+        $client = app($user->typeable_type)::find($user->typeable_id);
+        $typeOfEmployent = $client->typeOfEmployment;
+
+        $result = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'type_of_employments.id' => $typeOfEmployent->id,
+            'type-of-employment' => $typeOfEmployent->name
+        ];
+
+        return response()->json(['data' => $result], $this->successStatus);
+    }
+
+    /**
+     * Get employees
+     *
+     * @return JsonResponse
+     */
+    public function employees()
+    {
+        $user = auth()->user();
+        $typeable = app($user->typeable_type)::find($user->typeable_id);
+
+        $employees = [];
+        switch ($user->type) {
+            case 'client':
+                $employees = $this->getClientEmployees($typeable);
+                break;
+        }
+
+        return response()->json(['data'=>$employees], $this->successStatus);
+    }
+
+    /**
      * Register contractor API
      *
      * @param RegisterContractor $request
@@ -163,5 +206,22 @@ class UsersController extends Controller
         return Contractor::create([
             'restaurant_id' => $restaurant->id,
         ]);
+    }
+
+    private function getClientEmployees($client): Object
+    {
+        return Client::where('clients.company_id', $client->company_id)
+            ->join('users', 'users.typeable_id', 'clients.id')
+            ->leftJoin('type_of_employments', 'type_of_employments.id', 'clients.type-of-employment_id')
+            ->where('typeable_type', 'like', '%Client')
+            ->orderBy('users.id', 'asc')
+            ->select(
+                'users.name as name',
+                'users.email as email',
+                'type_of_employments.id as type-of-employment_id',
+                'type_of_employments.name as type-of-employment',
+                'users.id as user_id'
+            )
+            ->get();
     }
 }

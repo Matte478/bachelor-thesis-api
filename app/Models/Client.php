@@ -19,4 +19,9 @@ class Client extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function typeOfEmployment(): belongsTo
+    {
+        return $this->belongsTo(TypeOfEmployment::class, 'type-of-employment_id');
+    }
 }
