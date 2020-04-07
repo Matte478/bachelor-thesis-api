@@ -12,4 +12,9 @@ class  UserObserver
             $user->setAttribute($key, $value);
         }
     }
+
+    public function updating(User $user)
+    {
+
+    }
 }

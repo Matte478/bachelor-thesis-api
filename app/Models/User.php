@@ -20,7 +20,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'typeable_id', 'typeable_type'
+        'name', 'email', 'password', 'typeable_id', 'typeable_type',
+//        'company_id', 'restaurant_id'
     ];
 
     protected $appends = [
@@ -33,7 +34,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token'
     ];
 
     /**
@@ -45,19 +46,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function getTypeAttribute() : string
+    public function getTypeAttribute(): string
     {
         $typeable = explode("\\", $this->typeable_type);
         $type = strtolower(end($typeable));
         return $type;
     }
 
-    public function typeable() : morphTo
+    public function typeable(): morphTo
     {
         return $this->morphTo();
     }
-    
-    public static function boot() : void
+
+    public static function boot(): void
     {
         parent::boot();
         User::observe(new UserObserver());

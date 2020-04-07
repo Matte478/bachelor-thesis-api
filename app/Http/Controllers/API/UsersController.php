@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\User\RegisterClient;
 use App\Http\Requests\API\User\RegisterClientEmployee;
 use App\Http\Requests\API\User\RegisterContractor;
+use App\Http\Requests\API\User\UpdateClientEmployee;
 use App\Models\Client;
 use App\Models\Company;
 use App\Models\Contractor;
@@ -12,8 +13,10 @@ use App\Models\Restaurant;
 use App\Http\Controllers\Controller;
 use App\Models\TypeOfEmployment;
 use App\Models\User;
+use App\Observers\UserObserver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -41,7 +44,7 @@ class UsersController extends Controller
         $success['token'] =  $user->createToken('obedovac')->accessToken;
         $success['name'] =  $user->name;
 
-        return response()->json(['success'=>$success], $this->successStatus);
+        return response()->json(['success' => $success], $this->successStatus);
     }
 
     /**
@@ -73,7 +76,7 @@ class UsersController extends Controller
 
         User::create($sanitized);
 
-        return response()->json(['success'=>'success'], $this->successStatus);
+        return response()->json(['success' => 'success'], $this->successStatus);
     }
 
     /**
@@ -86,17 +89,75 @@ class UsersController extends Controller
     {
         $user = User::find($employee);
         $client = app($user->typeable_type)::find($user->typeable_id);
-        $typeOfEmployent = $client->typeOfEmployment;
 
         $result = [
             'id' => $user->id,
             'name' => $user->name,
-            'email' => $user->email,
-            'type_of_employments.id' => $typeOfEmployent->id,
-            'type-of-employment' => $typeOfEmployent->name
+            'email' => $user->email
         ];
 
+        $typeOfEmployment = $client->typeOfEmployment;
+
+        if($typeOfEmployment) {
+            $result['type-of-employment_id'] = $typeOfEmployment->id;
+            $result['type-of-employment'] = $typeOfEmployment->name;
+        }
+
         return response()->json(['data' => $result], $this->successStatus);
+    }
+
+    /**
+     * Update client employee API
+     *
+     * @param UpdateClientEmployee $request
+     * @param $employee
+     * @return JsonResponse
+     */
+    public function updateClientEmployee(UpdateClientEmployee $request, $employee)
+    {
+        $sanitized = $request->validated();
+
+        $logIn = auth()->user();
+
+        if(isset($sanitized['password']))
+            $sanitized['password'] = bcrypt($sanitized['password']);
+
+        if(isset($sanitized['type-of-employment_id'])) {
+            $typeOfEmployment = TypeOfEmployment::find($sanitized['type-of-employment_id']);
+            if($typeOfEmployment->company_id != $logIn->company_id) {
+                $sanitized['type-of-employment_id'] = null;
+            }
+        }
+
+        $eventDispatcher = User::getEventDispatcher();
+        $eventDispatcher->forget('eloquent.retrieved: App\Models\User');
+
+        $user = User::find($employee);
+        $user->update($sanitized);
+
+        $employee = app($user->typeable_type)::find($user->typeable_id);
+        $employee->update($sanitized);
+
+        User::observe(UserObserver::class);
+
+        return response()->json(['success' => $user], $this->successStatus);
+    }
+
+    public function destroyClientEmployee($employee)
+    {
+        $logIn = auth()->user();
+
+        $employee = User::find($employee);
+
+        if($logIn->company_id != $employee->company_id)
+            return response()->json(['error' => 'Unauthorised'], 401);
+
+        $typeable = app($employee->typeable_type)::find($employee->typeable_id);
+
+        $employee->delete();
+        $typeable->delete();
+
+        return response()->json(['success' => 'success'], $this->successStatus);
     }
 
     /**
@@ -116,7 +177,7 @@ class UsersController extends Controller
                 break;
         }
 
-        return response()->json(['data'=>$employees], $this->successStatus);
+        return response()->json(['data' => $employees], $this->successStatus);
     }
 
     /**
@@ -141,7 +202,7 @@ class UsersController extends Controller
         $success['token'] = $user->createToken('obedovac')->accessToken;
         $success['name'] =  $user->name;
 
-        return response()->json(['success'=>$success], $this->successStatus);
+        return response()->json(['success' => $success], $this->successStatus);
     }
     
     /**
@@ -159,7 +220,7 @@ class UsersController extends Controller
             return response()->json(['success' => $success], $this->successStatus);
         }
         else {
-            return response()->json(['error'=>'Unauthorised'], 401);
+            return response()->json(['error' => 'Unauthorised'], 401);
         }
     }
 

@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('employees',                                     'API\UsersController@employees');
     Route::post('employees',                                    'API\UsersController@registerClientEmployee');
     Route::get('employees/{employee}',                          'API\UsersController@getClientEmployee');
+    Route::post('employees/{employee}',                         'API\UsersController@updateClientEmployee');
+    Route::delete('employees/{employee}',                       'API\UsersController@destroyClientEmployee');
 
     Route::get('menu',                                          'API\MenusController@index');
 
