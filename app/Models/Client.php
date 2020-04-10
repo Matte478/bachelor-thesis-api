@@ -15,6 +15,14 @@ class Client extends Model
         'id', 'created_at', 'updated_at'
     ];
 
+    public function getContributionAttribute(): float
+    {
+        $typeOfEmployment = $this->typeOfEmployment;
+        $contribution = $typeOfEmployment ? $typeOfEmployment->contribution : 0;
+
+        return $contribution;
+    }
+
     public function company(): belongsTo
     {
         return $this->belongsTo(Company::class);

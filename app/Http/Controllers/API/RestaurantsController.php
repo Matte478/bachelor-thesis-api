@@ -8,7 +8,7 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class RestaurantController extends Controller
+class RestaurantsController extends Controller
 {
     public $successStatus = 200;
 

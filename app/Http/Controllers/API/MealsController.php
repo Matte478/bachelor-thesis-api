@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Meal\DestroyMeal;
-use App\Http\Requests\API\Meal\storeMeal;
+use App\Http\Requests\API\Meal\StoreMeal;
 use App\Http\Requests\API\Meal\UpdateMeal;
 use App\Models\Meal;
 use Exception;
@@ -33,18 +33,27 @@ class MealsController extends Controller
             return response()->json(['error' => 'Unauthorised'], 401);
 
         $menu = $restaurant->menu->first();
-        $meal = $menu->meal()->orderBy('id')->get();
+        $meals = $menu->meal()->orderBy('id')->get();
 
-        return response()->json(['data' => $meal], $this->successStatus);
+        if($user->type == 'client') {
+            $discount = $typeable->contribution;
+
+            foreach ($meals as &$meal) {
+                $discoutPrice = number_format($meal->price - $discount, 2);
+                $meal->discount_price = $discoutPrice > 0 ? $discoutPrice : 0;
+            }
+        }
+
+        return response()->json(['data' => $meals], $this->successStatus);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param storeMeal $request
+     * @param StoreMeal $request
      * @return JsonResponse
      */
-    public function store(storeMeal $request)
+    public function store(StoreMeal $request)
     {
         $sanitized = $request->validated();
 

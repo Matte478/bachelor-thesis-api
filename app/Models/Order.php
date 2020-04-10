@@ -48,9 +48,15 @@ class Order extends Model
         return $query->where('date', '<=', Carbon::parse($date));
     }
 
-    public function scopeCompany(Builder $query, $company): Builder
+    public function scopeCompany(Builder $query, ...$company): Builder
     {
         return $query->join('companies', 'companies.id', 'company_id')
-                    ->where('companies.company', $company);
+                    ->whereIn('companies.company', $company);
+    }
+
+    public function scopeEmployee(Builder $query, ...$employee): Builder
+    {
+        return $query->join('users', 'users.id', 'user_id')
+            ->whereIn('users.name', $employee);
     }
 }

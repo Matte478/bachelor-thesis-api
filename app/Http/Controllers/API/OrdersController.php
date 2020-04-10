@@ -9,11 +9,9 @@ use App\Models\Company;
 use App\Models\Meal;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\JsonResponse;
 
-class OrderController extends Controller
+class OrdersController extends Controller
 {
     protected $orderRepository;
     public $successStatus = 200;
@@ -30,7 +28,7 @@ class OrderController extends Controller
 
     /**
      * @param string $type
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index($type = 'days')
     {
@@ -42,7 +40,7 @@ class OrderController extends Controller
 
         switch($user->type) {
             case 'client':
-                $result = $this->clientIndex($user);
+                $result = $this->clientIndex($user, $type);
                 break;
             case 'contractor':
                 $result = $this->contractorIndex($user, $type);
@@ -53,8 +51,19 @@ class OrderController extends Controller
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function employee()
+    {
+        $user = auth()->user();
+        $orders = $this->orderRepository->getEmployeeOrders($user->id);
+
+        return response()->json(['data' => $orders], $this->successStatus);
+    }
+
+    /**
      * @param StoreOrder $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreOrder $request)
     {
@@ -98,9 +107,9 @@ class OrderController extends Controller
         return response()->json(['success' => 'success'], $this->successStatus);
     }
 
-    private function clientIndex($user)
+    private function clientIndex($user, $type)
     {
-        $orders = $this->orderRepository->getClientOrders($user->id);
+        $orders = $this->orderRepository->getClientOrders($user->id, $type);
 
         return $orders;
     }

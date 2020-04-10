@@ -27,7 +27,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('employees',                                     'API\UsersController@employees');
     Route::post('employees',                                    'API\UsersController@registerClientEmployee');
     Route::get('employees/{employee}',                          'API\UsersController@getClientEmployee');
-    Route::post('employees/{employee}',                         'API\UsersController@updateClientEmployee');
+    Route::put('employees/{employee}',                         'API\UsersController@updateClientEmployee');
     Route::delete('employees/{employee}',                       'API\UsersController@destroyClientEmployee');
 
     Route::get('menu',                                          'API\MenusController@index');
@@ -36,25 +36,26 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('meals',                                         'API\MealsController@index');
     Route::post('meals',                                        'API\MealsController@store');
     Route::get('meals/{meal}',                                  'API\MealsController@show');
-    Route::post('meals/{meal}',                                 'API\MealsController@update');
+    Route::put('meals/{meal}',                                 'API\MealsController@update');
     Route::delete('meals/{meal}',                               'API\MealsController@destroy');
     
     // Agreements
-    Route::get('agreements',                                    'API\AgreementController@index');
-    Route::post('agreements',                                   'API\AgreementController@create');
-    Route::post('agreements/{agreement}/confirm',               'API\AgreementController@confirm');
+    Route::get('agreements',                                    'API\AgreementsController@index');
+    Route::post('agreements',                                   'API\AgreementsController@create');
+    Route::post('agreements/{agreement}/confirm',               'API\AgreementsController@confirm');
 
     // Restaurants
-    Route::get('restaurants',                                   'API\RestaurantController@index');
+    Route::get('restaurants',                                   'API\RestaurantsController@index');
 
     // Orders
-    Route::get('orders/{type?}',                                'API\OrderController@index');
-    Route::post('orders',                                       'API\OrderController@store');
+    Route::get('orders/employee',                               'API\OrdersController@employee');
+    Route::get('orders/{type?}',                                'API\OrdersController@index');
+    Route::post('orders',                                       'API\OrdersController@store');
 
     // Type of employments
     Route::get('type-of-employments',                          'API\TypeOfEmploymentsController@index');
     Route::post('type-of-employments',                         'API\TypeOfEmploymentsController@store');
     Route::get('type-of-employments/{typeOfEmployment}',       'API\TypeOfEmploymentsController@show');
-    Route::post('type-of-employments/{typeOfEmployment}',      'API\TypeOfEmploymentsController@update');
+    Route::put('type-of-employments/{typeOfEmployment}',      'API\TypeOfEmploymentsController@update');
     Route::delete('type-of-employments/{typeOfEmployment}',    'API\TypeOfEmploymentsController@destroy');
 });

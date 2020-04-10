@@ -4,7 +4,7 @@ namespace App\Http\Requests\API\Meal;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class storeMeal extends FormRequest
+class StoreMeal extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -5,8 +5,8 @@ namespace App\Repositories;
 
 
 use App\Models\Order;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -17,7 +17,7 @@ class OrderRepository
      * @param int $userId
      * @return \Illuminate\Database\Eloquent\Collection|QueryBuilder|QueryBuilder[]
      */
-    public function getClientOrders(int $userId)
+    public function getEmployeeOrders(int $userId)
     {
         $orders = QueryBuilder::for(Order::class)
             ->allowedFilters([
@@ -33,6 +33,43 @@ class OrderRepository
         return $orders;
     }
 
+    /**
+     * @param int $userId
+     * @param string $type
+     * @return mixed|null
+     */
+    public function getClientOrders(int $userId, string $type = 'days')
+    {
+        $client = User::find($userId);
+
+        $query = QueryBuilder::for(Order::class)
+            ->allowedFilters([
+                AllowedFilter::scope('employee'),
+                AllowedFilter::scope('date_from'),
+                AllowedFilter::scope('date_to'),
+                AllowedFilter::exact('date')
+            ]);
+
+        if( !$this->isJoined($query, 'users') ) {
+            $query->join('users', 'users.id', 'user_id');
+        };
+
+        $query->defaultSort('date', 'name')
+            ->allowedSorts('id', 'date', 'name', 'price')
+            ->where('company_id', $client->company_id)
+            ->select('name', 'email', 'meal_id', 'meal', 'date', 'price', 'discount_price');
+
+        $orders = $query->get();
+
+        $grouped = $this->groupClientQueryResult($orders, $type);
+
+        if($type == 'months')
+            $result = $this->formatResult($grouped, 'client');
+        else
+            $result = $grouped;
+
+        return $result;
+    }
 
     /**
      * @param int $restaurantId
@@ -60,8 +97,8 @@ class OrderRepository
 
         $orders = $query->get();
 
-        $grouped = $this->groupQueryResult($orders, $type);
-        $result = $this->formatResult($grouped);
+        $grouped = $this->groupContractorQueryResult($orders, $type);
+        $result = $this->formatResult($grouped, 'contractor');
 
         return $result;
     }
@@ -71,7 +108,7 @@ class OrderRepository
      * @param string $type
      * @return mixed
      */
-    private function groupQueryResult($orders, $type = 'days')
+    private function groupContractorQueryResult($orders, $type = 'days')
     {
         $result = null;
 
@@ -94,16 +131,39 @@ class OrderRepository
         return $result;
     }
 
+    private function groupClientQueryResult($orders, $type = 'days')
+    {
+        $result = null;
+
+        switch ($type) {
+            case 'months':
+                $result = $orders->groupBy([
+                    'date' => function($d) {
+                        return Carbon::parse($d->date)->format('yy-m');
+                    },
+                    'name' => 'name',
+                    'meal_id' => 'meal_id'
+                ]);
+                break;
+            case 'days':
+            default:
+                $result = $orders->groupBy(['date']);
+                break;
+        }
+
+        return $result;
+    }
+
     /**
      * @param $array
      * @return mixed
      */
-    private function formatResult($array)
+    private function formatResult($array, $type)
     {
-        // map days
-        return $array->map(function($days) {
-            // map companies
-            return $days->map(function($companies) {
+        // map days or months
+        return $array->map(function($days) use ($type) {
+            // map companies or employees name
+            return $days->map(function($companies) use ($type) {
                 // map orders
                 $meals = $companies->map(function($orders) {
                     $count = collect($orders)->count();
@@ -111,29 +171,39 @@ class OrderRepository
                     $order['count'] = $count;
                     return $order;
                 });
+
                 $price = $this->calculateOrderPrice($meals);
-                $arr = [
-                    'price' => $price,
-                    'meals' => $meals
-                ];
+
+                if($type == 'client')
+                    $arr['discount_price'] = $price['discount_price'];
+
+                $arr['price'] = $price['price'];
+                $arr['meals'] = $meals;
+
                 return $arr;
             });
         });
     }
 
+
     /**
-     * @param $meals
-     * @return float
+     * @param object $meals
+     * @return array
      */
-    private function calculateOrderPrice($meals): float
+    private function calculateOrderPrice(object $meals): array
     {
         $price = 0;
+        $discount = 0;
 
         foreach($meals as $meal) {
             $price += ($meal->count * $meal->price);
+            $discount += ($meal->count * $meal->discount_price);
         }
 
-        return number_format($price, 2);
+        return [
+            'price' => number_format($price, 2),
+            'discount_price' => number_format($discount, 2)
+        ];
     }
 
     /**

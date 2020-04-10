@@ -10,7 +10,7 @@ use App\Models\Agreement;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class AgreementController extends Controller
+class AgreementsController extends Controller
 {
     public $successStatus = 200;
 
