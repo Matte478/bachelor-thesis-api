@@ -28,4 +28,17 @@ class UpdateMeal extends FormRequest
             'price' => ['sometimes', 'numeric', 'between:0,99.99'],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'meal.string' => 'Názov jedla je povinné pole.',
+            'price.numeric' => 'Cena musí byť číslo.'
+        ];
+    }
+
+
 }

@@ -28,4 +28,18 @@ class StoreTypeOfEmployment extends FormRequest
             'contribution' => ['required', 'numeric'],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'name.required' => 'Názov je povinné pole.',
+            'contribution.required' => 'Príspevok je povinné pole.',
+            'contribution.numeric' => 'Príspevok musí byť číslo.'
+        ];
+    }
+
+
 }

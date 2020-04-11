@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\User\Login;
 use App\Http\Requests\API\User\RegisterClient;
 use App\Http\Requests\API\User\RegisterClientEmployee;
 use App\Http\Requests\API\User\RegisterContractor;
@@ -16,7 +17,6 @@ use App\Models\User;
 use App\Observers\UserObserver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -74,9 +74,11 @@ class UsersController extends Controller
         $sanitized['typeable_id'] = $client->id;
         $sanitized['typeable_type'] = get_class($client);
 
-        User::create($sanitized);
+        $user = User::create($sanitized);
 
-        return response()->json(['success' => 'success'], $this->successStatus);
+        $result = $this->getClientEmployeeArray($user->id);
+
+        return response()->json(['data' => $result], $this->successStatus);
     }
 
     /**
@@ -87,21 +89,7 @@ class UsersController extends Controller
      */
     public function getClientEmployee($employee)
     {
-        $user = User::find($employee);
-        $client = app($user->typeable_type)::find($user->typeable_id);
-
-        $result = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email
-        ];
-
-        $typeOfEmployment = $client->typeOfEmployment;
-
-        if($typeOfEmployment) {
-            $result['type-of-employment_id'] = $typeOfEmployment->id;
-            $result['type-of-employment'] = $typeOfEmployment->name;
-        }
+        $result = $this->getClientEmployeeArray($employee);
 
         return response()->json(['data' => $result], $this->successStatus);
     }
@@ -204,15 +192,21 @@ class UsersController extends Controller
 
         return response()->json(['success' => $success], $this->successStatus);
     }
-    
+
     /**
      * Login API
      *
+     * @param Login $request
      * @return JsonResponse
      */
-    public function login()
+    public function login(Login $request)
     {
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+        $sanitized = $request->validated();
+
+        if(Auth::attempt([
+            'email' => $sanitized['email'],
+            'password' => $sanitized['password']
+        ])) {
             $user = Auth::user();
             $success['token_type'] = 'Bearer';
             $success['token'] = $user->createToken('obedovac')->accessToken;
@@ -220,7 +214,10 @@ class UsersController extends Controller
             return response()->json(['success' => $success], $this->successStatus);
         }
         else {
-            return response()->json(['error' => 'Unauthorised'], 401);
+            $errors = [
+                'credentials' => ['Nesprávne prihlasovacie údaje']
+            ];
+            return response()->json(['errors' => $errors], 401);
         }
     }
 
@@ -284,5 +281,26 @@ class UsersController extends Controller
                 'users.id as user_id'
             )
             ->get();
+    }
+
+    public function getClientEmployeeArray($employee): array
+    {
+        $user = User::find($employee);
+        $client = app($user->typeable_type)::find($user->typeable_id);
+
+        $result = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email
+        ];
+
+        $typeOfEmployment = $client->typeOfEmployment;
+
+        if($typeOfEmployment) {
+            $result['type-of-employment_id'] = $typeOfEmployment->id;
+            $result['type-of-employment'] = $typeOfEmployment->name;
+        }
+
+        return $result;
     }
 }

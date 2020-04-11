@@ -28,4 +28,18 @@ class StoreMeal extends FormRequest
             'price' => ['required', 'numeric', 'between:0,99.99'],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'meal.required' => 'Názov jedla je povinné pole.',
+            'price.required' => 'Cena je povinné pole.',
+            'price.numeric' => 'Cena musí byť číslo.'
+        ];
+    }
+
+
 }

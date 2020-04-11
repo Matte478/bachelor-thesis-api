@@ -31,4 +31,25 @@ class RegisterContractor extends FormRequest
             'city' => ['required', 'string'],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'name.required' => 'Meno je povinné pole.',
+            'email.required' => 'Email je povinné pole.',
+            'email.email' => 'E-mail musí byť platnou e-mailovou adresou.',
+            'email.unique' => 'E-mail už je obsadený.',
+            'password.required' => 'Heslo je povinné pole.',
+            'password.min' => 'Heslo musí mať najmenej 8 znakov.',
+            'password.confirmed' => 'Potvrdenie hesla sa nezhoduje.',
+            'restaurant.required' => 'Názov reštaurácie je povinné pole.',
+            'restaurant.unique' => 'Názov reštaurácie už je obsadený.',
+            'city.required' => 'Mesto je povinné pole.',
+        ];
+    }
+
+
 }

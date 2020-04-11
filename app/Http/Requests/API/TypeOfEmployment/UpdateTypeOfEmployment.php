@@ -28,4 +28,17 @@ class UpdateTypeOfEmployment extends FormRequest
             'contribution' => ['sometimes', 'numeric'],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'name.string' => 'Názov je povinné pole.',
+            'contribution.numeric' => 'Príspevok musí byť číslo.'
+        ];
+    }
+
+
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests\API\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateClientEmployee extends FormRequest
+class Login extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,8 @@ class UpdateClientEmployee extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'string', 'email', 'max:255', 'unique:users,email,' . $this->route('employee')],
-            'password' => ['sometimes', 'string', 'min:8', 'confirmed'],
-            'type-of-employment_id' => ['nullable', 'integer'],
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
         ];
     }
 
@@ -37,13 +35,11 @@ class UpdateClientEmployee extends FormRequest
     public function messages()
     {
         return [
-            'name.string' => 'Meno je povinné pole.',
-            'email.string' => 'Email je povinné pole.',
+            'email.required' => 'Email je povinné pole.',
             'email.email' => 'E-mail musí byť platnou e-mailovou adresou.',
-            'email.unique' => 'E-mail už je obsadený.',
             'password.required' => 'Heslo je povinné pole.',
-            'password.min' => 'Heslo musí mať najmenej 8 znakov.',
-            'password.confirmed' => 'Potvrdenie hesla sa nezhoduje.',
         ];
     }
+
+
 }
