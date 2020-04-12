@@ -36,6 +36,7 @@ class UsersController extends Controller
         $sanitized['typeable_type'] = get_class($client);
 
         $user = User::create($sanitized);
+        $user->assignRole('Client');
 
         $success['token'] =  $user->createToken('obedovac')->accessToken;
         $success['name'] =  $user->name;
@@ -60,6 +61,7 @@ class UsersController extends Controller
         $sanitized['typeable_type'] = get_class($contractor);
 
         $user = User::create($sanitized);
+        $user->assignRole('Contractor');
 
         $success['token_type'] = 'Bearer';
         $success['token'] = $user->createToken('obedovac')->accessToken;
@@ -85,7 +87,7 @@ class UsersController extends Controller
             $user = Auth::user();
             $success['token_type'] = 'Bearer';
             $success['token'] = $user->createToken('obedovac')->accessToken;
-            $success['user'] = $user;
+            $success['roles'] = $user->getRoleNames();
             return response()->json(['success' => $success], $this->successStatus);
         }
         else {

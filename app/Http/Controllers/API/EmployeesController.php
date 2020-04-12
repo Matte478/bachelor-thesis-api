@@ -67,6 +67,7 @@ class EmployeesController extends Controller
         $sanitized['typeable_type'] = get_class($client);
 
         $user = User::create($sanitized);
+        $user->assignRole('Employee');
         $result = $this->getClientEmployeeArray($user->id);
 
         return response()->json(['data' => $result], $this->successStatus);

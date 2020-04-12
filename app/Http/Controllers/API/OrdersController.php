@@ -27,7 +27,6 @@ class OrdersController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
-
     /**
      * @param IndexOrder $request
      * @param string $type
@@ -75,6 +74,7 @@ class OrdersController extends Controller
         $orders = isset($sanitized['orders']) ? $sanitized['orders'] : [];
 
         $user = auth()->user();
+        $client = app($user->typeable_type)::find($user->typeable_id);
         $company = Company::find($user->company_id);
 
         foreach($orders as $data)
@@ -95,7 +95,7 @@ class OrdersController extends Controller
                 'meal_id' => $meal->id,
                 'meal' => $meal->meal,
                 'price' => $meal->price,
-                'discount_price' => $meal->price,
+                'discount_price' => number_format($meal->price - $client->contribution, 2),
                 'user_id' => $user->id,
                 'restaurant_id' => $restaurant->id,
                 'company_id' => $company->id,

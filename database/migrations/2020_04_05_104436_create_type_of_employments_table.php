@@ -15,7 +15,7 @@ class CreateTypeOfEmploymentsTable extends Migration
     {
         Schema::create('type_of_employments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->string('name');
             $table->decimal('contribution');
             $table->unsignedInteger('company_id');
             $table->foreign('company_id')

@@ -27,14 +27,15 @@ class Company extends Model
         return $this->belongsTo(Agreement::class);
     }
 
-    public function contractor(): Restaurant
+    public function contractor()
     {
-//        TODO: refactor
-//        $agreement = $this->agreement()->first();
         $agreement = Agreement::where('company_id', $this->id)
                                 ->where('confirmed', true)
                                 ->first();
 
-        return $agreement->restaurant()->first();
+        if($agreement)
+            return $agreement->restaurant()->first();
+
+        return null;
     }
 }

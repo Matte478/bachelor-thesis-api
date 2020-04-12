@@ -28,10 +28,11 @@ class MealsController extends Controller
         $user = auth()->user();
         $typeable = app($user->typeable_type)::find($user->typeable_id);
 
-        if($user->typeable_type != 'App\Models\Contractor')
+        if($user->type == 'client') {
             $restaurant = $typeable->company->contractor();
-        else
+        } else {
             $restaurant = $typeable->restaurant()->first();
+        }
 
         if(!$restaurant)
             return response()->json(['error' => 'Unauthorised'], 401);
