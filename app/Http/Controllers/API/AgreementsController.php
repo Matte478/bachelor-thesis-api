@@ -7,6 +7,7 @@ use App\Http\Requests\API\Agreement\ConfirmAgreement;
 use App\Http\Requests\API\Agreement\CreateAgreement;
 use App\Http\Requests\API\Agreement\IndexAgreement;
 use App\Models\Agreement;
+use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -16,7 +17,7 @@ class AgreementsController extends Controller
 
     /**
      * @param IndexAgreement $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(IndexAgreement $request)
     {
@@ -37,7 +38,7 @@ class AgreementsController extends Controller
     
     /**
      * @param CreateAgreement $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function create(CreateAgreement $request)
     {
@@ -64,7 +65,7 @@ class AgreementsController extends Controller
     /**
      * @param Agreement $agreement
      * @param ConfirmAgreement $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function confirm(ConfirmAgreement $request, Agreement $agreement)
     {
