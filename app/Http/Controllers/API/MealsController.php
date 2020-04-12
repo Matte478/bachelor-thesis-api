@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Meal\DestroyMeal;
+use App\Http\Requests\API\Meal\IndexMeal;
+use App\Http\Requests\API\Meal\ShowMeal;
 use App\Http\Requests\API\Meal\StoreMeal;
 use App\Http\Requests\API\Meal\UpdateMeal;
 use App\Models\Meal;
@@ -14,12 +16,14 @@ class MealsController extends Controller
 {
     public $successStatus = 200;
 
+
     /**
      * Return a listing of the resource.
      *
+     * @param IndexMeal $request
      * @return JsonResponse
      */
-    public function index()
+    public function index(IndexMeal $request)
     {
         $user = auth()->user();
         $typeable = app($user->typeable_type)::find($user->typeable_id);
@@ -74,10 +78,11 @@ class MealsController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param ShowMeal $request
      * @param Meal $meal
      * @return JsonResponse
      */
-    public function show(Meal $meal)
+    public function show(ShowMeal $request, Meal $meal)
     {
         return response()->json(['data' => $meal], $this->successStatus);
     }

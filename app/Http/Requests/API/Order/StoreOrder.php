@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreOrder extends FormRequest
 {
@@ -28,7 +29,7 @@ class StoreOrder extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('order.create');
     }
 
     /**

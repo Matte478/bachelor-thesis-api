@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\TypeOfEmployment;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateTypeOfEmployment extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateTypeOfEmployment extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('type-of-employment.edit');
     }
 
     /**

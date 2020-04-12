@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Meal;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateMeal extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateMeal extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('meal.edit');
     }
 
     /**

@@ -77,7 +77,7 @@ class AgreementsController extends Controller
             return response()->json(['error'=>'Unauthorised'], 401);
 
         if($agreement->confirmed)
-            return response()->json(['error'=>'The agreement has already been confirmed'], 409);
+            return response()->json(['error' => 'The agreement has already been confirmed'], 409);
 
         $agreement->update([
             'confirmed' => true

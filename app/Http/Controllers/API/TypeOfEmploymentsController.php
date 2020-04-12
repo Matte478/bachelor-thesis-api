@@ -106,7 +106,7 @@ class TypeOfEmploymentsController extends Controller
      */
     public function destroy(DestroyTypeOfEmployment $request, TypeOfEmployment $typeOfEmployment)
     {
-        $sanitized = $request->validated();
+        $request->validated();
 
         $user = auth()->user();
         $client = app($user->typeable_type)::find($user->typeable_id);

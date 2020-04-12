@@ -5,7 +5,7 @@ namespace App\Http\Requests\API\Order;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class UpdateOrder extends FormRequest
+class IndexOrder extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +14,7 @@ class UpdateOrder extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows('order.edit');
+        return Gate::allows('order.index');
     }
 
     /**
@@ -25,7 +25,7 @@ class UpdateOrder extends FormRequest
     public function rules()
     {
         return [
-            'meal_id' => ['required', 'numeric']
+            //
         ];
     }
 }

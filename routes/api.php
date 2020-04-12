@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::put('employees/{employee}',                         'API\UsersController@updateClientEmployee');
     Route::delete('employees/{employee}',                       'API\UsersController@destroyClientEmployee');
 
-    Route::get('menu',                                          'API\MenusController@index');
+//    Route::get('menu',                                          'API\MenusController@index');
 
     // Meals
     Route::get('meals',                                         'API\MealsController@index');

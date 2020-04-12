@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\API\Employee\DestroyEmployee;
+use App\Http\Requests\API\Employee\IndexEmployee;
+use App\Http\Requests\API\Employee\ShowEmployee;
+use App\Http\Requests\API\Employee\UpdateEmployee;
 use App\Http\Requests\API\User\Login;
 use App\Http\Requests\API\User\RegisterClient;
 use App\Http\Requests\API\User\RegisterClientEmployee;
@@ -84,10 +88,11 @@ class UsersController extends Controller
     /**
      * Get client employee API
      *
+     * @param ShowEmployee $request
      * @param $employee
      * @return JsonResponse
      */
-    public function getClientEmployee($employee)
+    public function getClientEmployee(ShowEmployee $request, $employee)
     {
         $result = $this->getClientEmployeeArray($employee);
 
@@ -95,13 +100,11 @@ class UsersController extends Controller
     }
 
     /**
-     * Update client employee API
-     *
-     * @param UpdateClientEmployee $request
+     * @param UpdateEmployee $request
      * @param $employee
      * @return JsonResponse
      */
-    public function updateClientEmployee(UpdateClientEmployee $request, $employee)
+    public function updateClientEmployee(UpdateEmployee $request, $employee)
     {
         $sanitized = $request->validated();
 
@@ -131,7 +134,12 @@ class UsersController extends Controller
         return response()->json(['success' => $user], $this->successStatus);
     }
 
-    public function destroyClientEmployee($employee)
+    /**
+     * @param DestroyEmployee $request
+     * @param $employee
+     * @return JsonResponse
+     */
+    public function destroyClientEmployee(DestroyEmployee $request, $employee)
     {
         $logIn = auth()->user();
 
@@ -151,9 +159,10 @@ class UsersController extends Controller
     /**
      * Get employees
      *
+     * @param IndexEmployee $request
      * @return JsonResponse
      */
-    public function employees()
+    public function employees(IndexEmployee $request)
     {
         $user = auth()->user();
         $typeable = app($user->typeable_type)::find($user->typeable_id);

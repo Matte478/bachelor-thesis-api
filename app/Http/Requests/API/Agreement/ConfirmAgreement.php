@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Agreement;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class ConfirmAgreement extends FormRequest
 {
@@ -13,7 +14,7 @@ class ConfirmAgreement extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('agreement.confirm');
     }
 
     /**

@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Restaurant\IndexRestaurant;
 use App\Models\Company;
 use App\Models\Restaurant;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class RestaurantsController extends Controller
 {
     public $successStatus = 200;
 
-    public function index()
+    public function index(IndexRestaurant $restaurant)
     {
         $user = Auth()->user();
         $company = Company::find($user->company_id)->first();

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Order\EmployeeOrder;
+use App\Http\Requests\API\Order\IndexOrder;
 use App\Http\Requests\API\Order\StoreOrder;
 use App\Models\Agreement;
 use App\Models\Company;
@@ -27,10 +29,11 @@ class OrdersController extends Controller
 
 
     /**
+     * @param IndexOrder $request
      * @param string $type
      * @return JsonResponse
      */
-    public function index($type = 'days')
+    public function index(IndexOrder $request, $type = 'days')
     {
         $user = auth()->user();
         $result = null;
@@ -51,9 +54,10 @@ class OrdersController extends Controller
     }
 
     /**
+     * @param EmployeeOrder $request
      * @return JsonResponse
      */
-    public function employee()
+    public function employee(EmployeeOrder $request)
     {
         $user = auth()->user();
         $orders = $this->orderRepository->getEmployeeOrders($user->id);
