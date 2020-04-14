@@ -13,8 +13,8 @@
 
 
 Route::post('login',                'API\UsersController@login');
-Route::post('registerClient',       'API\UsersController@registerClient');
-Route::post('registerContractor',   'API\UsersController@registerContractor');
+Route::post('register-client',       'API\UsersController@registerClient');
+Route::post('register-contractor',   'API\UsersController@registerContractor');
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::post('logout',                                       'API\UsersController@logout');

@@ -12,8 +12,6 @@ class FillPermissionsAndRoles extends Migration
 
     /**
      * FillPermissionsAndRoles constructor.
-     *
-     * @param $roles
      */
     public function __construct()
     {
@@ -55,7 +53,7 @@ class FillPermissionsAndRoles extends Migration
             'meal.index',
 
             // orders
-            'order.index',
+            'order.employee',
             'order.create',
         ]);
 
@@ -141,27 +139,6 @@ class FillPermissionsAndRoles extends Migration
                     DB::table('role_has_permissions')->insert(['permission_id' => $permissionItem->id, 'role_id' => $roleId]);
                 }
             }
-
-//            foreach ($this->users as $user) {
-//                $roles = $user['roles'];
-//                unset($user['roles']);
-//                $permissions = $user['permissions'];
-//                unset($user['permissions']);
-//
-//                $userId = DB::table('users')->insertGetId($user);
-//
-//                $roleItems = DB::table('roles')->whereIn('name', $roles)->get();
-//                foreach ($roleItems as $roleItem) {
-//                    //TODO change the model_type
-//                    DB::table('model_has_roles')->insert(['role_id' => $roleItem->id, 'model_id' => $userId, 'model_type' => 'App\Models\User']);
-//                }
-//
-//                $permissionItems = DB::table('permissions')->whereIn('name', $permissions)->get();
-//                foreach ($permissionItems as $permissionItem) {
-//                    //TODO change the model_type
-//                    DB::table('model_has_permissions')->insert(['permission_id' => $permissionItem->id, 'model_id' => $userId, 'model_type' => 'App\Models\User']);
-//                }
-//            }
         });
     }
 
