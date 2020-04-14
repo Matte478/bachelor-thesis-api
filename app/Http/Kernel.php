@@ -1,4 +1,7 @@
 <?php
+    // header("Access-Control-Allow-Origin: *");
+    // header("Access-Control-Allow-Headers: ACCEPT, CONTENT-TYPE, X-CSRF-TOKEN");
+    // header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
 
 namespace App\Http;
 
@@ -18,6 +21,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
+        \App\Http\Middleware\Cors::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
