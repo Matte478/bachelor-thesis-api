@@ -14,7 +14,7 @@ class RestaurantsController extends Controller
     public function index(IndexRestaurant $restaurant)
     {
         $user = Auth()->user();
-        $company = Company::find($user->company_id)->first();
+        $company = Company::find($user->company_id);
         $city = $company->city;
 
         $restaurants = Restaurant::where('city', 'ilike', $city)->get();

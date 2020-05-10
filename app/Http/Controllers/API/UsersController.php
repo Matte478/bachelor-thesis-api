@@ -38,8 +38,8 @@ class UsersController extends Controller
         $user = User::create($sanitized);
         $user->assignRole('Client');
 
-        $success['token'] =  $user->createToken('obedovac')->accessToken;
-        $success['name'] =  $user->name;
+        $success['token'] = $user->createToken('obedovac')->accessToken;
+        $success['name'] = $user->name;
 
         return response()->json(['success' => $success], $this->successStatus);
     }
