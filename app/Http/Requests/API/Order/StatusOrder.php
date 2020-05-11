@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StatusOrder extends FormRequest
 {
@@ -13,7 +14,7 @@ class StatusOrder extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Gate::allows('order.status');
     }
 
     /**
