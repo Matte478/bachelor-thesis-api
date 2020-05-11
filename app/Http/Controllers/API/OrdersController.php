@@ -125,7 +125,7 @@ class OrdersController extends Controller
     {
         $sanitized = $request->validated();
 
-        $company = Company::where('company', 'ilike', $company)->first();
+        $company = Company::where('company', $company)->first();
         $agreement = null;
         $today = Carbon::parse($date)->isToday();
 
