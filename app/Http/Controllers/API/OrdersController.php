@@ -5,13 +5,17 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Order\EmployeeOrder;
 use App\Http\Requests\API\Order\IndexOrder;
+use App\Http\Requests\API\Order\StatusOrder;
 use App\Http\Requests\API\Order\StoreOrder;
 use App\Models\Agreement;
 use App\Models\Company;
 use App\Models\Meal;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 
 class OrdersController extends Controller
 {
@@ -109,6 +113,41 @@ class OrdersController extends Controller
         }
 
         return response()->json(['success' => 'success'], $this->successStatus);
+    }
+
+    /**
+     * @param StatusOrder $request
+     * @param $company
+     * @param $date
+     * @return JsonResponse
+     */
+    public function status(StatusOrder $request, $company, $date)
+    {
+        $sanitized = $request->validated();
+
+        $company = Company::where('company', 'ilike', $company)->first();
+        $agreement = null;
+        $today = Carbon::parse($date)->isToday();
+
+        $user = auth()->user();
+        $contractor = app($user->typeable_type)::find($user->typeable_id);
+
+        if($company) {
+            $agreement = Agreement::where('company_id', $company->id)
+                ->where('restaurant_id', $contractor->restaurant_id)
+                ->where('confirmed', true)
+                ->first();
+        }
+
+        if(!$company || !$agreement || !$today)
+            return response()->json(['message' => 'Forbidden'], 403);
+
+        Order::where('company_id', $company->id)
+            ->where('date', $date)
+            ->update(['status' => $sanitized['status']]);
+
+        return response()->json(['success' => 'success'], $this->successStatus);
+
     }
 
     private function clientIndex($user, $type)

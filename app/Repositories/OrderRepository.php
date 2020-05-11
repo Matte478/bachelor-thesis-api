@@ -93,7 +93,7 @@ class OrderRepository
         $query->defaultSort('date')
             ->allowedSorts('id', 'date', 'price')
             ->where('restaurant_id', $restaurantId)
-            ->select('meal_id', 'meal', 'company_id', 'company', 'date', 'price');
+            ->select('meal_id', 'meal', 'company_id', 'company', 'date', 'price', 'status');
 
         $orders = $query->get();
 
@@ -164,11 +164,18 @@ class OrderRepository
         return $array->map(function($days) use ($type) {
             // map companies or employees name
             return $days->map(function($companies) use ($type) {
+                $status = null;
                 // map orders
-                $meals = $companies->map(function($orders) {
+                $meals = $companies->map(function($orders) use (&$status) {
                     $count = collect($orders)->count();
                     $order = $orders[0];
                     $order['count'] = $count;
+
+                    if(!$status)
+                        $status = $order['status'];
+
+                    unset($order['status']);
+
                     return $order;
                 });
 
@@ -176,6 +183,8 @@ class OrderRepository
 
                 if($type == 'client')
                     $arr['discount_price'] = $price['discount_price'];
+                else if($type == 'contractor')
+                    $arr['status'] = $status;
 
                 $arr['price'] = $price['price'];
                 $arr['meals'] = $meals;

@@ -118,7 +118,7 @@ class MealsController extends Controller
         $typeable = app($user->typeable_type)::find($user->typeable_id);
 
         if($user->typeable_type != 'App\Models\Contractor')
-            return response()->json(['error'=>'Unauthorised'], 401);
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
 
         $meal->delete();
 

@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     // Orders
     Route::get('orders/employee',                               'API\OrdersController@employee');
     Route::get('orders/{type?}',                                'API\OrdersController@index');
+    Route::put('orders/{company}/{date}',                       'API\OrdersController@status');
     Route::post('orders',                                       'API\OrdersController@store');
 
     // Type of employments
