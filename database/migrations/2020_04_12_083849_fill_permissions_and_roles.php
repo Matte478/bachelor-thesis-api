@@ -9,12 +9,15 @@ class FillPermissionsAndRoles extends Migration
 {
     protected $roles;
     protected $permissions;
+    protected $guardName;
 
     /**
      * FillPermissionsAndRoles constructor.
      */
     public function __construct()
     {
+        $this->guardName = 'api';
+
         $clientPermissions = collect([
             // employees
             'employee',
@@ -81,7 +84,7 @@ class FillPermissionsAndRoles extends Migration
         $this->permissions = $allPermissions->map(function($permission) {
             return [
                 'name' => $permission,
-                'guard_name' => 'api',
+                'guard_name' => $this->guardName,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];
@@ -90,7 +93,7 @@ class FillPermissionsAndRoles extends Migration
         $this->roles = [
             [
                 'name' => 'Client',
-                'guard_name' => 'api',
+                'guard_name' => $this->guardName,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'permissions' => $clientPermissions,
@@ -98,7 +101,7 @@ class FillPermissionsAndRoles extends Migration
 
             [
                 'name' => 'Employee',
-                'guard_name' => 'api',
+                'guard_name' => $this->guardName,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'permissions' => $employeePermissions,
@@ -106,14 +109,13 @@ class FillPermissionsAndRoles extends Migration
 
             [
                 'name' => 'Contractor',
-                'guard_name' => 'api',
+                'guard_name' => $this->guardName,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'permissions' => $contractorPermissions,
             ],
         ];
     }
-
 
     /**
      * Run the migrations.
@@ -122,7 +124,6 @@ class FillPermissionsAndRoles extends Migration
      */
     public function up()
     {
-        app()['cache']->forget('spatie.permission.cache');
         DB::transaction(function () {
             foreach ($this->permissions as $permission) {
                 DB::table('permissions')->insert($permission);
@@ -140,6 +141,7 @@ class FillPermissionsAndRoles extends Migration
                 }
             }
         });
+        app()['cache']->forget(config('permission.cache.key'));
     }
 
     /**
@@ -169,5 +171,6 @@ class FillPermissionsAndRoles extends Migration
                 }
             }
         });
+        app()['cache']->forget(config('permission.cache.key'));
     }
 }
