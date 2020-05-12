@@ -14,8 +14,6 @@ use App\Models\Order;
 use App\Repositories\OrderRepository;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
 
 class OrdersController extends Controller
 {

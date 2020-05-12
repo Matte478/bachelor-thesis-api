@@ -68,7 +68,7 @@ class TypeOfEmploymentsController extends Controller
         $companyId = $client->company_id;
 
         if($typeOfEmployment->company_id != $companyId)
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
 
         return response()->json(['data' => $typeOfEmployment], $this->successStatus);
     }
@@ -89,7 +89,7 @@ class TypeOfEmploymentsController extends Controller
         $companyId = $client->company_id;
 
         if($typeOfEmployment->company_id != $companyId)
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
 
         $typeOfEmployment->update($sanitized);
 
@@ -113,7 +113,7 @@ class TypeOfEmploymentsController extends Controller
         $company = $client->company;
 
         if($typeOfEmployment->company_id != $company->id)
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
 
         $typeOfEmployment->delete();
 
