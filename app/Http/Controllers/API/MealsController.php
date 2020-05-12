@@ -65,9 +65,6 @@ class MealsController extends Controller
         $user = auth()->user();
         $typeable = app($user->typeable_type)::find($user->typeable_id);
 
-        if($user->typeable_type != 'App\Models\Contractor')
-            return response()->json(['error'=>'Unauthorised'], 401);
-
         $menu = $typeable->restaurant->menu->first();
         $sanitized['menu_id'] = $menu->id;
 
@@ -99,6 +96,11 @@ class MealsController extends Controller
     {
         $sanitized = $request->validated();
 
+        $user = auth()->user();
+
+        if($meal->restaurant->id != $user->restaurant_id)
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
+
         $meal->update($sanitized);
 
         return response()->json(['data' => $meal], $this->successStatus);
@@ -115,15 +117,12 @@ class MealsController extends Controller
     public function destroy(DestroyMeal $request, Meal $meal)
     {
         $user = auth()->user();
-        $typeable = app($user->typeable_type)::find($user->typeable_id);
+        $menu = $meal->menu;
 
-        if($user->typeable_type != 'App\Models\Contractor')
+        if($meal->restaurant->id != $user->restaurant_id)
             return response()->json(['message' => 'This action is unauthorized.'], 403);
 
         $meal->delete();
-
-        $restaurant = $typeable->restaurant;
-        $menu = $restaurant->menu->first();
         $meals = $menu->meal->all();
 
         return response()->json(['data' => $meals], $this->successStatus);

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Meal extends Model
 {
@@ -25,10 +24,4 @@ class Meal extends Model
     {
         return $this->menu->restaurant();
     }
-
-//    TODO: why I defined this?
-//    public function meal() : hasMany
-//    {
-//        return $this->hasMany(Meal::class);
-//    }
 }
