@@ -112,9 +112,12 @@ class EmployeesController extends Controller
         $eventDispatcher->forget('eloquent.retrieved: App\Models\User');
 
         $user = User::find($employee);
-        $user->update($sanitized);
-
         $employee = app($user->typeable_type)::find($user->typeable_id);
+
+        if($logIn->company_id != $employee->company_id)
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
+
+        $user->update($sanitized);
         $employee->update($sanitized);
 
         User::observe(UserObserver::class);
@@ -134,7 +137,7 @@ class EmployeesController extends Controller
         $employee = User::find($employee);
 
         if($logIn->company_id != $employee->company_id)
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
 
         $typeable = app($employee->typeable_type)::find($employee->typeable_id);
 
