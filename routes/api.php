@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('agreements',                                    'API\AgreementsController@index');
     Route::post('agreements',                                   'API\AgreementsController@create');
     Route::post('agreements/{agreement}/confirm',               'API\AgreementsController@confirm');
+    Route::post('agreements/{agreement}/unconfirm',             'API\AgreementsController@unconfirm');
 
     // Restaurants
     Route::get('restaurants',                                   'API\RestaurantsController@index');

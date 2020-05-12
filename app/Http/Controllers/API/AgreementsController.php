@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Agreement\ConfirmAgreement;
 use App\Http\Requests\API\Agreement\CreateAgreement;
 use App\Http\Requests\API\Agreement\IndexAgreement;
+use App\Http\Requests\API\Agreement\UnconfirmAgreement;
 use App\Models\Agreement;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -72,9 +73,8 @@ class AgreementsController extends Controller
         $sanitized = $request->validated();
 
         $user = auth()->user();
-        $restaurantId = $user->restaurant_id;
 
-        if($agreement->restaurant_id != $restaurantId)
+        if($agreement->restaurant_id != $user->restaurant_id)
             return response()->json(['error'=>'Unauthorised'], 401);
 
         if($agreement->confirmed)
@@ -83,6 +83,23 @@ class AgreementsController extends Controller
         $agreement->update([
             'confirmed' => true
         ]);
+
+        return response()->json(['success' => 'success'], $this->successStatus);
+    }
+
+    public function unconfirm(UnconfirmAgreement $request, Agreement $agreement)
+    {
+        $sanitized = $request->validated();
+
+        $user = auth()->user();
+
+        if($agreement->restaurant_id != $user->restaurant_id)
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
+
+        if($agreement->confirmed)
+            return response()->json(['message' => 'The agreement has already been confirmed'], 409);
+
+        $agreement->delete();
 
         return response()->json(['success' => 'success'], $this->successStatus);
     }
